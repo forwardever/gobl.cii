@@ -15,10 +15,33 @@ func (c *Converter) prepareSettlement(inv *bill.Invoice) error {
 	}
 	stlm := c.doc.Transaction.Settlement
 	if inv.Payment != nil && inv.Payment.Terms != nil {
-		stlm.PaymentTerms = []*document.Terms{
-			{
-				Description: inv.Payment.Terms.Detail,
-			},
+
+		description := inv.Payment.Terms.Detail
+
+		if len(inv.Payment.Terms.DueDates) == 0 {
+			stlm.PaymentTerms = []*document.Terms{
+				{
+					Description: description,
+				},
+			}
+		} else {
+			for _, dueDate := range inv.Payment.Terms.DueDates {
+				term := &document.Terms{
+					Description: description,
+				}
+				if !dueDate.Amount.Equals(inv.Totals.Payable) {
+					term.PartialPayment = dueDate.Amount.String()
+				}
+				if dueDate.Date != nil {
+					term.DueDate = &document.IssueDate{
+						DateFormat: &document.Date{
+							Value:  formatIssueDate(*dueDate.Date),
+							Format: issueDateFormat,
+						},
+					}
+				}
+				stlm.PaymentTerms = append(stlm.PaymentTerms, term)
+			}
 		}
 	}
 
