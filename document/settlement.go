@@ -3,6 +3,7 @@ package document
 // Settlement defines the structure of ApplicableHeaderTradeSettlement of the CII standard
 type Settlement struct {
 	CreditorRefID      string                `xml:"ram:CreditorReferenceID,omitempty"`
+	PaymentReference   string                `xml:"ram:PaymentReference,omitempty"`
 	Currency           string                `xml:"ram:InvoiceCurrencyCode"`
 	Payee              *Party                `xml:"ram:PayeeTradeParty,omitempty"`
 	PaymentMeans       []*PaymentMeans       `xml:"ram:SpecifiedTradeSettlementPaymentMeans"`

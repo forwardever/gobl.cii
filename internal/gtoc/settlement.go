@@ -90,6 +90,10 @@ func (c *Converter) prepareSettlement(inv *bill.Invoice) error {
 		means := make([]*document.PaymentMeans, 0)
 		typeCode := instr.Ext[untdid.ExtKeyPaymentMeans].String()
 
+		if inv.Payment.Instructions.Ref != "" {
+			stlm.PaymentReference = inv.Payment.Instructions.Ref.String()
+		}
+
 		if instr.CreditTransfer != nil {
 			credit := &document.PaymentMeans{
 				TypeCode:    typeCode,
